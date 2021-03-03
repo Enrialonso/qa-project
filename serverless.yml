@@ -1,0 +1,50 @@
+service: movie-api
+frameworkVersion: '2'
+
+plugins:
+  - serverless-offline
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+  api_key_tmdb: ${env:API_KEY}
+
+package:
+  exclude:
+    - .idea/**
+    - .vscode/**
+    - venv/**
+    - .npmignore
+    - package.json
+    - package-lock.json
+    - .gitignore
+    - requirements.txt
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: eu-west-1
+  stage: dev
+  timeout: 20
+
+functions:
+  search-movie:
+    handler: search_movie/main.search_movie
+    memorySize: 128
+    events:
+      - http:
+          path: requests-movie/{query}
+          method: get
+    environment:
+      API_KEY: ${self:custom.api_key_tmdb}
+
+  popular-movies:
+    handler: popular_movies/main.popular_movies
+    memorySize: 128
+    events:
+      - http:
+          path: popular-movies
+          method: get
+    environment:
+      API_KEY: ${self:custom.api_key_tmdb}
