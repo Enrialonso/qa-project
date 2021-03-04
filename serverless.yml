@@ -14,7 +14,7 @@ package:
   exclude:
     - .idea/**
     - .vscode/**
-    - venv/**
+    - .venv/**
     - .npmignore
     - package.json
     - package-lock.json

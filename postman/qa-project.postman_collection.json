@@ -1,12 +1,23 @@
 {
 	"info": {
 		"_postman_id": "872f7866-37be-435e-806f-fa7b2dfa2f16",
-		"name": "keepler-project",
+		"name": "qa-project",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "requests-movie",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "popular-movies",
 			"request": {
 				"method": "GET",
 				"header": [],
