@@ -11,7 +11,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "{{base-url}}requests-movie/avengers",
+					"host": [
+						"{{base-url}}requests-movie"
+					],
+					"path": [
+						"avengers"
+					]
 				}
 			},
 			"response": []
@@ -22,7 +28,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "{{base-url}}popular-movies",
+					"host": [
+						"{{base-url}}popular-movies"
+					]
 				}
 			},
 			"response": []
