@@ -5,7 +5,6 @@ from utils.dynamo_db.dynamo_db import CacheModel
 
 
 class Cache:
-
     @staticmethod
     def search(cache_key: str, requests_attr: str, kwargs: dict) -> dict:
         try:

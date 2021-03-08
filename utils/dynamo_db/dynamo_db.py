@@ -6,7 +6,7 @@ from pynamodb.models import Model
 
 
 def default_ttl():
-    return int(time() + int(os.getenv('DYNAMODB_TTL')))
+    return int(time() + int(os.getenv("DYNAMODB_TTL")))
 
 
 class CacheModel(Model):
@@ -14,6 +14,6 @@ class CacheModel(Model):
         table_name = "CacheAPI"
         region = "eu-west-1"
 
-    cache_key = UnicodeAttribute(hash_key=True, null=False, attr_name='cache_key')
-    data = JSONAttribute(null=False, attr_name='data')
+    cache_key = UnicodeAttribute(hash_key=True, null=False, attr_name="cache_key")
+    data = JSONAttribute(null=False, attr_name="data")
     TTL = NumberAttribute(null=False, default=default_ttl())
