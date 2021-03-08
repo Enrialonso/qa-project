@@ -9,12 +9,14 @@ custom:
   pythonRequirements:
     dockerizePip: non-linux
   api_key_tmdb: ${env:API_KEY}
+  DynamoDBTTL: 3600000
 
 package:
   exclude:
     - .idea/**
     - .vscode/**
     - .venv/**
+    - venv/**
     - .npmignore
     - package.json
     - package-lock.json
@@ -32,19 +34,70 @@ functions:
   search-movie:
     handler: search_movie/main.search_movie
     memorySize: 128
+    role: CacheTableRole
     events:
       - http:
           path: requests-movie/{query}
           method: get
     environment:
       API_KEY: ${self:custom.api_key_tmdb}
+      DYNAMODB_TTL: ${self:custom.DynamoDBTTL}
 
   popular-movies:
     handler: popular_movies/main.popular_movies
     memorySize: 128
+    role: CacheTableRole
     events:
       - http:
           path: popular-movies
           method: get
     environment:
       API_KEY: ${self:custom.api_key_tmdb}
+      DYNAMODB_TTL: ${self:custom.DynamoDBTTL}
+
+resources:
+  Resources:
+
+    DynamoDBCacheTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: CacheAPI
+        AttributeDefinitions:
+          - AttributeName: cache_key
+            AttributeType: S
+        KeySchema:
+          - AttributeName: cache_key
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TimeToLiveSpecification:
+          AttributeName: TTL
+          Enabled: true
+
+    CacheTableRole:
+      Type: AWS::IAM::Role
+      DependsOn: DynamoDBCacheTable
+      Properties:
+        RoleName: CacheTableRole
+        AssumeRolePolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: DynamoDBCacheTablePolicy
+            PolicyDocument:
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:Scan
+                    - dynamodb:GetItem
+                    - dynamodb:PutItem
+                    - dynamodb:Query
+                    - dynamodb:DeleteItem
+                    - dynamodb:DescribeTable
+                  Resource:
+                    - !GetAtt DynamoDBCacheTable.Arn
